@@ -219,7 +219,6 @@ learning_platform/
 - Payment gateway integration for paid courses
 - Certificate generation upon course completion
 - Advanced analytics and reporting dashboards
-- REST API for mobile and third-party apps
 - Support for live, interactive video classes
 
 ---
