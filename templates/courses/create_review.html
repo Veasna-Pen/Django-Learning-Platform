@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Write Review - Learning Platform{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-star"></i> Write Review for {{ course.title }}</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Submit Review
+                    </button>
+                    <a href="{% url 'course_detail' course.pk %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

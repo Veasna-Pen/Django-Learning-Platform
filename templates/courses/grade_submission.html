@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Grade Submission - Learning Platform{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-edit"></i> Grade Submission</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Assignment: {{ submission.assignment.title }}</h5>
+                <p class="mb-0">Student: {{ submission.student.user.get_full_name|default:submission.student.user.username }}</p>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6>Assignment Description:</h6>
+                    <p>{{ submission.assignment.description|linebreaks }}</p>
+                </div>
+                
+                {% if submission.content %}
+                    <div class="mb-4">
+                        <h6>Student's Text Submission:</h6>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <pre>{{ submission.content }}</pre>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% if submission.file %}
+                    <div class="mb-4">
+                        <h6>Submitted File:</h6>
+                        <a href="{{ submission.file.url }}" class="btn btn-outline-primary" target="_blank">
+                            <i class="fas fa-download"></i> Download File
+                        </a>
+                    </div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Save Grade
+                    </button>
+                    <a href="{% url 'grade_submissions' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>Submission Details</h5>
+                <ul class="list-unstyled">
+                    <li><strong>Max Score:</strong> {{ submission.assignment.max_score }}</li>
+                    <li><strong>Due Date:</strong> {{ submission.assignment.due_date|date:"M d, Y H:i" }}</li>
+                    <li><strong>Submitted:</strong> {{ submission.submitted_date|date:"M d, Y H:i" }}</li>
+                    <li><strong>Status:</strong> 
+                        {% if submission.submitted_date > submission.assignment.due_date %}
+                            <span class="text-danger">Late</span>
+                        {% else %}
+                            <span class="text-success">On Time</span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

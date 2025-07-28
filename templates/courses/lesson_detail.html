@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ lesson.title }} - Learning Platform{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'course_list' %}">Courses</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'course_detail' lesson.course.pk %}">{{ lesson.course.title }}</a></li>
+        <li class="breadcrumb-item active">{{ lesson.title }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h1>{{ lesson.title }}</h1>
+                <p class="text-muted">{{ lesson.course.title }}</p>
+                
+                {% if lesson.description %}
+                    <div class="mb-4">
+                        <h5>Description</h5>
+                        <p>{{ lesson.description|linebreaks }}</p>
+                    </div>
+                {% endif %}
+                
+                {% if lesson.video_url %}
+                    <div class="mb-4">
+                        <h5>Video Content</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe src="{{ lesson.video_url }}" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% if lesson.video_file %}
+                    <div class="mb-4">
+                        <h5>Video File</h5>
+                        <video controls class="w-100">
+                            <source src="{{ lesson.video_file.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                {% endif %}
+                
+                {% if lesson.pdf_file %}
+                    <div class="mb-4">
+                        <h5>Course Materials</h5>
+                        <a href="{{ lesson.pdf_file.url }}" class="btn btn-outline-primary" target="_blank">
+                            <i class="fas fa-file-pdf"></i> Download PDF
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Assignments -->
+        {% if assignments %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3><i class="fas fa-tasks"></i> Assignments</h3>
+                    {% if user.role == 'instructor' and lesson.course.instructor == user.instructor_profile %}
+                        <a href="{% url 'create_assignment' lesson.pk %}" class="btn btn-sm btn-primary float-end">
+                            <i class="fas fa-plus"></i> Add Assignment
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% for assignment in assignments %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+                            <div>
+                                <h6 class="mb-1">{{ assignment.title }}</h6>
+                                <small class="text-muted">Due: {{ assignment.due_date|date:"M d, Y H:i" }}</small>
+                                <div class="mt-1">
+                                    <span class="badge bg-info">Max Score: {{ assignment.max_score }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <a href="{% url 'assignment_detail' assignment.pk %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>Lesson Information</h5>
+                <ul class="list-unstyled">
+                    <li><strong>Course:</strong> {{ lesson.course.title }}</li>
+                    <li><strong>Order:</strong> {{ lesson.order }}</li>
+                    <li><strong>Created:</strong> {{ lesson.created_date|date:"M d, Y" }}</li>
+                </ul>
+                
+                <div class="mt-3">
+                    <a href="{% url 'course_detail' lesson.course.pk %}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-arrow-left"></i> Back to Course
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

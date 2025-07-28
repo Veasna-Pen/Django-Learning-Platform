@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Submit Assignment - Learning Platform{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-upload"></i> Submit Assignment: {{ assignment.title }}</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h5>Assignment Instructions</h5>
+                    <p>{{ assignment.description|linebreaks }}</p>
+                    <p><strong>Due Date:</strong> {{ assignment.due_date|date:"M d, Y H:i" }}</p>
+                    <p><strong>Max Score:</strong> {{ assignment.max_score }}</p>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-upload"></i> Submit Assignment
+                    </button>
+                    <a href="{% url 'assignment_detail' assignment.pk %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

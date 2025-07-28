@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - Learning Platform{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-tachometer-alt"></i> Student Dashboard</h1>
+<p class="lead">Welcome back, {{ user.get_full_name|default:user.username }}!</p>
+
+<div class="row">
+    <!-- Enrolled Courses -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-book"></i> My Courses</h3>
+            </div>
+            <div class="card-body">
+                {% for enrollment in enrollments %}
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+                        <div>
+                            <h6 class="mb-1">{{ enrollment.course.title }}</h6>
+                            <small class="text-muted">{{ enrollment.course.instructor.user.get_full_name|default:enrollment.course.instructor.user.username }}</small>
+                            <div class="mt-2">
+                                <strong>Progress: {{ enrollment.progress }}%</strong>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ enrollment.progress }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="{% url 'course_detail' enrollment.course.pk %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">You haven't enrolled in any courses yet. <a href="{% url 'course_list' %}">Browse courses</a></p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Upcoming Assignments -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-tasks"></i> Upcoming Assignments</h5>
+            </div>
+            <div class="card-body">
+                {% for assignment in upcoming_assignments %}
+                    <div class="border-bottom py-2">
+                        <h6 class="mb-1">{{ assignment.title }}</h6>
+                        <small class="text-muted">{{ assignment.lesson.course.title }}</small>
+                        <div class="text-danger">
+                            <small><i class="fas fa-clock"></i> Due: {{ assignment.due_date|date:"M d, Y H:i" }}</small>
+                        </div>
+                        <a href="{% url 'assignment_detail' assignment.pk %}" class="btn btn-sm btn-outline-primary mt-1">View</a>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">No upcoming assignments.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <h5>Quick Actions</h5>
+                <a href="{% url 'course_list' %}" class="btn btn-primary btn-sm mb-2 w-100">
+                    <i class="fas fa-search"></i> Browse Courses
+                </a>
+                <a href="{% url 'my_grades' %}" class="btn btn-info btn-sm w-100">
+                    <i class="fas fa-chart-line"></i> View Grades
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

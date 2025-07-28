@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login - Learning Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center"><i class="fas fa-sign-in-alt"></i> Login</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                
+                <hr>
+                <div class="text-center">
+                    <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+                </div>
+                
+                <div class="mt-4">
+                    <h5>Demo Accounts:</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Student:</strong><br>
+                            Username: student<br>
+                            Password: testpass123
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Instructor:</strong><br>
+                            Username: instructor<br>
+                            Password: testpass123
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Employee:</strong><br>
+                            Username: employee<br>
+                            Password: testpass123
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

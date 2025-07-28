@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Courses - Learning Platform{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-cog"></i> Manage Courses</h1>
+
+<div class="card">
+    <div class="card-body">
+        {% if courses %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Instructor</th>
+                            <th>Category</th>
+                            <th>Students</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                            <tr>
+                                <td>{{ course.title }}</td>
+                                <td>{{ course.instructor.user.get_full_name|default:course.instructor.user.username }}</td>
+                                <td>{{ course.category.name }}</td>
+                                <td>{{ course.enrollments.count }}</td>
+                                <td>
+                                    {% if course.published %}
+                                        <span class="badge bg-success">Published</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Draft</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ course.created_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'course_detail' course.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> No courses found.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

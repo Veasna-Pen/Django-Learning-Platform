@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Grade Submissions - Learning Platform{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-clipboard-check"></i> Submissions to Grade</h1>
+
+<div class="card">
+    <div class="card-body">
+        {% if submissions %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Assignment</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for submission in submissions %}
+                            <tr>
+                                <td>{{ submission.student.user.get_full_name|default:submission.student.user.username }}</td>
+                                <td>{{ submission.assignment.lesson.course.title }}</td>
+                                <td>{{ submission.assignment.title }}</td>
+                                <td>{{ submission.submitted_date|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'grade_submission' submission.pk %}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i> Grade
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> No submissions to grade.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

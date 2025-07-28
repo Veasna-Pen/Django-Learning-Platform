@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses - Learning Platform{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-book"></i> Available Courses</h1>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="category" class="form-label">Category</label>
+                <select name="category" id="category" class="form-select">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="tag" class="form-label">Tag</label>
+                <select name="tag" id="tag" class="form-select">
+                    <option value="">All Tags</option>
+                    {% for tag in tags %}
+                        <option value="{{ tag.id }}" {% if tag.id|stringformat:"s" == selected_tag %}selected{% endif %}>
+                            {{ tag.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="instructor" class="form-label">Instructor</label>
+                <select name="instructor" id="instructor" class="form-select">
+                    <option value="">All Instructors</option>
+                    {% for instructor in instructors %}
+                        <option value="{{ instructor.id }}" {% if instructor.id|stringformat:"s" == selected_instructor %}selected{% endif %}>
+                            {{ instructor.user.get_full_name|default:instructor.user.username }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">Filter</button>
+                <a href="{% url 'course_list' %}" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Courses Grid -->
+<div class="row">
+    {% for course in courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if course.image %}
+                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-book fa-3x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">
+                                <i class="fas fa-user"></i> {{ course.instructor.user.get_full_name|default:course.instructor.user.username }}
+                            </small>
+                            <span class="badge bg-primary">{{ course.category.name }}</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                {% if course.average_rating > 0 %}
+                                    <span class="text-warning">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= course.average_rating %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                    <small>({{ course.reviews.count }} reviews)</small>
+                                {% else %}
+                                    <small class="text-muted">No reviews yet</small>
+                                {% endif %}
+                            </div>
+                            <strong class="text-success">${{ course.price }}</strong>
+                        </div>
+                        
+                        <a href="{% url 'course_detail' course.pk %}" class="btn btn-primary w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> No courses found matching your criteria.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
